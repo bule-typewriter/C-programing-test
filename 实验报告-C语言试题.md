@@ -84,8 +84,8 @@
 同样是下载速度太慢的问题，于是在镜像网站下载。安装完成后在虚拟机配置好了操作系统。
 
 
+![](https://raw.githubusercontent.com/buletywriter/C-programing-test/main/images/屏幕截图 2025-10-22 141027.png)
 
-![](C:\Users\11225\Pictures\Screenshots\屏幕截图 2025-10-22 141027.png)
 
 同时也是第一次了解Linux操作系统，对通过命令行执行程序的特点感到新奇。
 
@@ -378,3 +378,4 @@ void mergeSort(int arr[], int l, int r) {
 
 
 *---考生：肖源泰*
+
