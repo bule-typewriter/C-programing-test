@@ -190,6 +190,45 @@ void test_time(int data[], int n) {
     free(temp);
 }
 
+// 从文件读取数据的函数
+int read_data_from_file(char* filename, int** data_ptr) {
+    FILE* file = fopen(filename, "r");
+    if (!file) {
+        printf("无法打开文件 %s\n", filename);
+        return 0;
+    }
+    
+    int n;
+    // 读取 n 的值
+    if (fscanf(file, "int n = %d;", &n) != 1) {
+        printf("文件格式错误: 无法读取 n\n");
+        fclose(file);
+        return 0;
+    }
+    
+    // 分配内存
+    *data_ptr = malloc(n * sizeof(int));
+    
+    // 跳过 "int data[] = {"
+    char buffer[100];
+    fgets(buffer, sizeof(buffer), file); // 读取剩余部分
+    
+    // 读取数组数据
+    for (int i = 0; i < n; i++) {
+        int value;
+        if (fscanf(file, "%d,", &value) != 1) {
+            printf("文件格式错误: 无法读取第 %d 个数据\n", i);
+            free(*data_ptr);
+            fclose(file);
+            return 0;
+        }
+        (*data_ptr)[i] = value;
+    }
+    
+    fclose(file);
+    return n;
+}
+
 int main() {
     srand(time(NULL));
     
@@ -219,22 +258,23 @@ int main() {
         printf("数据文件名: ");
         scanf("%s", name);
         
-        // 包含数据文件
-        if(name[0] == 'm' && name[1] == 'y') { // 如果是mydata.h
-            #include "mydata.h"
+        int* data = NULL;
+        int n = read_data_from_file(name, &data);
+        
+        if (n > 0 && data != NULL) {
+            printf("数据量: %d\n", n);
+            printf("=== 性能测试结果 ===\n");
+            
+            // 多次测试取平均
+            int tests = 3;
+            for(int t = 1; t <= tests; t++) {
+                printf("\n测试 %d:\n", t);
+                test_time(data, n);
+            }
+            
+            free(data);
         } else {
-            printf("请先用选项1生成数据文件\n");
-            return 1;
-        }
-        
-        printf("数据量: %d\n", n);
-        printf("=== 性能测试结果 ===\n");
-        
-        // 多次测试取平均
-        int tests = 3;
-        for(int t = 1; t <= tests; t++) {
-            printf("\n测试 %d:\n", t);
-            test_time(data, n);
+            printf("读取数据失败!\n");
         }
     }
     
