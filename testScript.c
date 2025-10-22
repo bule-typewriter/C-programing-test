@@ -2,85 +2,44 @@
 #include <stdlib.h>
 #include <time.h>
 
-void generateTestData(int dataSize, int minValue, int maxValue, const char* filename) {
-    FILE *file = fopen(filename, "w");
-    if (file == NULL) {
-        printf("Error: Cannot create file %s\n", filename);
-        return;
-    }
-    
-    // 写入头文件保护
-    fprintf(file, "#ifndef TEST_DATA_H\n");
-    fprintf(file, "#define TEST_DATA_H\n\n");
-    
-    // 写入数组大小定义
-    fprintf(file, "#define DATA_SIZE %d\n\n", dataSize);
-    
-    // 写入测试数据数组
-    fprintf(file, "int test_data[DATA_SIZE] = {\n");
-    
-    srand(time(NULL)); // 设置随机种子
-    
-    for (int i = 0; i < dataSize; i++) {
-        // 生成指定范围内的随机整数
-        int value = minValue + rand() % (maxValue - minValue + 1);
-        fprintf(file, "    %d", value);
-        
-        if (i < dataSize - 1) {
-            fprintf(file, ",");
-        }
-        
-        // 每10个数字换一行
-        if ((i + 1) % 10 == 0) {
-            fprintf(file, "\n");
-        }
-    }
-    
-    fprintf(file, "\n};\n\n");
-    fprintf(file, "#endif // TEST_DATA_H\n");
-    
-    fclose(file);
-    printf("Test data generated successfully!\n");
-    printf("Data size: %d, Range: [%d, %d]\n", dataSize, minValue, maxValue);
-    printf("Output file: %s\n", filename);
-}
-
 int main() {
-    int dataSize, minValue, maxValue;
-    char filename[100];
+    int n, min, max;
+    char name[50];
     
-    printf("=== Test Data Generator ===\n");
+    printf("输入数据个数: ");
+    scanf("%d", &n);
     
-    // 获取用户输入
-    printf("Enter data size: ");
-    scanf("%d", &dataSize);
+    printf("输入最小值: ");
+    scanf("%d", &min);
     
-    printf("Enter minimum value: ");
-    scanf("%d", &minValue);
+    printf("输入最大值: ");
+    scanf("%d", &max);
     
-    printf("Enter maximum value: ");
-    scanf("%d", &maxValue);
+    printf("输入文件名: ");
+    scanf("%s", name);
     
-    printf("Enter output filename (without extension): ");
-    scanf("%s", filename);
+    // 创建文件
+    FILE *f = fopen(name, "w");
     
-    // 添加.h扩展名
-    char fullFilename[110];
-    snprintf(fullFilename, sizeof(fullFilename), "%s.h", filename);
+    // 写文件头
+    fprintf(f, "#define SIZE %d\n\n", n);
+    fprintf(f, "int data[SIZE] = {");
     
-    // 验证输入有效性
-    if (dataSize <= 0) {
-        printf("Error: Data size must be positive\n");
-        return 1;
+    srand(time(NULL));
+    
+    // 生成随机数
+    for(int i = 0; i < n; i++) {
+        int num = min + rand() % (max - min + 1);
+        fprintf(f, "%d", num);
+        if(i < n-1) {
+            fprintf(f, ", ");
+        }
     }
     
-    if (minValue > maxValue) {
-        printf("Error: Minimum value cannot be greater than maximum value\n");
-        return 1;
-    }
+    fprintf(f, "};\n");
+    fclose(f);
     
-    // 生成测试数据
-    generateTestData(dataSize, minValue, maxValue, fullFilename);
+    printf("完成! 生成了 %d 个 %d 到 %d 的随机数到 %s\n", n, min, max, name);
     
     return 0;
 }
